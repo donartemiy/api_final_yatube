@@ -1,10 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from posts.models import Group, Post, User, Comment
-from .serializers import GroupSerializer, PostSerializer, CommentSerializer
+from posts.models import Group, Post, User, Comment, Follow
+from .serializers import GroupSerializer, PostSerializer, CommentSerializer, FollowSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.exceptions import MethodNotAllowed
 from django.shortcuts import get_object_or_404
+
+from rest_framework.response import Response
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -34,3 +36,22 @@ class CommentViewSet(viewsets.ModelViewSet):
         post_id = self.kwargs.get('post_id')
         serializer.save(
             author=self.request.user, post=get_object_or_404(Post, pk=post_id))
+
+
+# class FollowViewSet(viewsets.ViewSet):
+    
+#     def list(self, request):
+#         queryset = Follow.objects.filter(user=request.user)
+#         serializer = FollowSerializer(queryset, many=True)
+#         return Response(serializer.data)
+    
+    # def create(self, request):
+    #     Follow.objects.get_or_create(user=request.user, following=)
+    #     return Response(serializer.data)
+
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
