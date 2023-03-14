@@ -6,6 +6,7 @@ from .permissions import IsOwnerOrReadOnly, IsOwnerOrReadOnlyToComments, OwnerOr
 from rest_framework.exceptions import MethodNotAllowed
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
+from rest_framework.pagination import LimitOffsetPagination
 
 from rest_framework.response import Response
 
@@ -14,6 +15,7 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsOwnerOrReadOnly]
+    pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
