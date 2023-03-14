@@ -40,18 +40,24 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 # class FollowViewSet(viewsets.ViewSet):
     
-#     def list(self, request):
-#         queryset = Follow.objects.filter(user=request.user)
-#         serializer = FollowSerializer(queryset, many=True)
-#         return Response(serializer.data)
+    # def list(self, request):
+    #     queryset = Follow.objects.filter(user=request.user)
+    #     serializer = FollowSerializer(queryset, many=True)
+    #     return Response(serializer.data)
     
     # def create(self, request):
     #     Follow.objects.get_or_create(user=request.user, following=)
     #     return Response(serializer.data)
 
+
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
+
+    def list(self, request):
+        queryset = Follow.objects.filter(user=request.user)
+        serializer = FollowSerializer(queryset, many=True)
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
