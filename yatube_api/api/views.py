@@ -47,11 +47,6 @@ class FollowViewSet(viewsets.ModelViewSet):
     search_fields = ('user__username', 'following__username',)
     pagination_class = None
 
-    # def list(self, request):
-    #     queryset = Follow.objects.filter(user=request.user)
-    #     serializer = FollowSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
 
