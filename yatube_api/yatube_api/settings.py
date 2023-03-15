@@ -20,7 +20,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'posts',
-    # 'djoser',
     'rest_framework_simplejwt'
 ]
 
