@@ -3,6 +3,7 @@ from rest_framework.relations import SlugRelatedField
 
 from posts.models import Comment, Follow, Group, Post, User
 
+
 class PostSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
 
