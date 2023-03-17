@@ -16,7 +16,6 @@ class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
-    text = serializers.CharField(required=True)
 
     class Meta:
         fields = '__all__'
@@ -26,7 +25,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
 
-    class Meta():
+    class Meta:
         fields = '__all__'
         model = Group
 
@@ -37,7 +36,6 @@ class FollowSerializer(serializers.ModelSerializer):
         slug_field='username',
         default=serializers.CurrentUserDefault())
     following = serializers.SlugRelatedField(
-        # read_only=True,
         slug_field='username',
         queryset=User.objects.all())
 
@@ -48,14 +46,14 @@ class FollowSerializer(serializers.ModelSerializer):
         validators = [
             serializers.UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
-                fields=['user', 'following'],
+                fields=('user', 'following'),
                 message='Вы уже подписаны'
             )
         ]
 
-    def validate(self, data):
+    def validate_following(self, data_following):
         """Валидация полученных значений при сериализации."""
-        if self.context['request'].user == data.get('following'):
+        if data_following == self.context['request'].user:
             raise serializers.ValidationError(
                 'Нельзя подписаться на самого себя')
-        return data
+        return data_following
