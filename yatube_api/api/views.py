@@ -1,20 +1,13 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, viewsets, mixins
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import GenericViewSet
 
 from api.permissions import IsOwnerOrReadOnly
 from api.serializers import (CommentSerializer, FollowSerializer,
                              GroupSerializer, PostSerializer)
-from posts.models import Follow, Group, Post
-
-
-class CreateListViewSet(mixins.CreateModelMixin,
-                        mixins.ListModelMixin,
-                        GenericViewSet):
-    pass
+from posts.models import Group, Post
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -30,7 +23,7 @@ class PostViewSet(viewsets.ModelViewSet):
 class GroupViewSet(viewsets. ReadOnlyModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (IsOwnerOrReadOnly, IsAuthenticatedOrReadOnly)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -48,12 +41,12 @@ class CommentViewSet(viewsets.ModelViewSet):
             author=self.request.user, post=get_object_or_404(Post, pk=post_id))
 
 
-class FollowViewSet(CreateListViewSet):
-    queryset = Follow.objects.all()
+class FollowViewSet(mixins.CreateModelMixin,
+                    mixins.ListModelMixin,
+                    GenericViewSet):
     serializer_class = FollowSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)
-    permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
         user = self.request.user
